@@ -5,10 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Business.Abstrack;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
+using Core.CrossCuttingConcerns.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstrack;
 using Entities.Concrete;
 using Entities.DTOs;
+using FluentValidation;
 
 namespace Business.Concrete
 {
@@ -50,14 +54,10 @@ namespace Business.Concrete
             return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarDetails());
         }
 
+        [ValidationAspect(typeof(CarValidator))]
         public IResult Add(Car car)
         {
-            if (car.Description.Length > 2 && car.DailyPrice > 0)
-            {
-                return new ErrorResult(Messages.CarNameİnvalid);
-            }
             _carDal.Add(car);
-
             return new SuccessResult(Messages.CarAdded);
         }
 
